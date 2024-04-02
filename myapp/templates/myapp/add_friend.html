@@ -1,0 +1,103 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}フレンド登録{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        text-align: center;
+    }
+
+    h1 {
+        color: #3cb371;
+        font-size: 60px;
+        padding: 20px;
+    }
+
+    .search {
+        margin: 30px;
+    }
+
+    .search input {
+        font-size: 30px;
+    }
+
+    .search button {
+        font-size: 25px;
+        border-radius: 5px;
+    }
+
+    .search button:hover {
+            background-color: #45a049;
+    }
+
+    .result {
+        font-size: 35px;
+    }
+
+    li {
+        list-style-type: none;
+        font-size: 30px;
+        color: #009944;
+    }
+
+    .message {
+        font-size: 25px;
+        color: #009944;
+    }
+
+    .add {
+        font-size: 35px;
+        padding: 30px;
+    }
+    
+    .add button {
+        font-size: 25px;
+        border-radius: 5px;
+        margin: 20px;
+    }
+
+    .add button:hover {
+            background-color: #45a049;
+    }
+
+</style>
+    <h1>フレンド登録</h1>
+    <p>↓フレンド名やIDで検索ができます↓</p>
+
+    <div class="search">
+        <form method="get" action="">
+            <input type="text" name="search_query" placeholder="ユーザー名またはユーザーIDを入力">
+            <button type="submit">検索</button>
+        </form>
+    </div>
+    
+    {% if users %}
+        <div class="result">検索結果</div>
+        <ul>
+            {% for user in users %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% for user in users %}
+        <div class="add">
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <label>{{ user.username }}</label>
+
+                <input type="checkbox" name="notify_setting" value="true"> 通知者に設定
+                <button type="submit">フレンドに追加</button>
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}

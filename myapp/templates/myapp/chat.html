@@ -1,0 +1,173 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}チャット画面{% endblock %}
+
+{% block content %}
+
+<style>
+  h1 {
+    font-size: 60px;
+    color: #3cb371;
+    text-align: center;
+  }
+
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+    overflow: hidden;
+  }
+
+  .message {
+    width: 100%;
+    margin: 5px 0;
+    display: flex;
+  }
+
+  .sent {
+    margin-left: auto;
+    background-color: #dcf8c6;
+    border-radius: 10px;
+    max-width: 100%;
+    align-self: flex-end;
+  }
+
+  .received {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 100%;
+    align-self: flex-start;
+  }
+
+  .timestamp {
+    font-size: 25px;
+    margin-top: 5px;
+    color: #94adda;
+    align-self: flex-end;
+  }
+
+  p {
+    padding-top: 50px;
+    text-align: center;
+  }
+
+  .selected-stamp {
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin: 50 10px;
+    padding: 30px;
+  }
+
+  .button {
+    border-radius: 5px;
+    font-size: 30px;
+    background-color: #ffff99;
+  }
+
+  button:hover {
+            background-color: #45a049;
+  }
+
+</style>
+
+  <h1>{{ nickname|default:friend.username }}さんとのチャット画面</h1>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<p>↓スタンプを選んで送信ボタンを押してください↓</p>
+<div class="stamps">
+  {% for stamp in stamps %}
+    <img src="{{ stamp.image_path.url }}" alt="{{ stamp.stamp_name }}" data-stamp-id="{{ stamp.id }}" class="stamp" onclick="selectStamp('{{ stamp.id }}');" style="width: 130px; height: 130px;">
+  {% endfor %}
+</div>
+
+<input type="hidden" id="selectedStampId" value="">
+
+<div class="button-container">
+    <button id="sendButton" class="button" type="button">送信</button>
+</div>
+
+<div class="chat-history">
+    {% for message in messages %}
+      <div class="message">
+        <div class="{% if message.user == request.user %}sent{% else %}received{% endif %}">
+          <strong>{{ message.user.username }}:</strong>
+          {% if message.stamp %}
+              <img src="{{ message.stamp.image_path.url }}" alt="{{ message.stamp.stamp_name }}" style="width: 100px; height: 100px;">
+          {% else %}
+              <p>スタンプなし</p>
+          {% endif %}
+
+          <span class="timestamp">{{ message.created_at|date:"Y年m月d日 H:i" }}</span>
+        </div>
+      </div>
+    {% empty %}
+      <p>メッセージはまだありません。</p>
+    {% endfor %}
+</div>
+
+
+  <script>
+  window.selectStamp = function(stampId) {
+      document.getElementById('selectedStampId').value = stampId;
+      
+      document.querySelectorAll('.stamps img').forEach(stamp => {
+          stamp.classList.remove('selected-stamp');
+      });
+
+      document.querySelectorAll('.stamps img').forEach(stamp => {
+          if(stamp.getAttribute('data-stamp-id') == stampId) {
+              stamp.classList.add('selected-stamp');
+          }
+      });
+  };  
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const sendStampUrl = "{% url 'send_stamp' %}";
+
+      function sendSelectedStamp() {
+          const stampId = document.getElementById('selectedStampId').value;
+          const friendId = '{{ friend_id }}';
+          const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+          if(stampId) {
+              fetch(sendStampUrl, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': csrftoken,
+                  },
+                  body: JSON.stringify({stamp_id: stampId, friend_id: friendId})
+              })
+              .then(response => response.json())
+              .then(data => {
+                  console.log(data);
+                  if(data.success) {
+                      alert("スタンプを送信しました！");
+                  } else {
+                      alert("エラー: " + data.message);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  alert("送信中にエラーが発生しました。");
+              });
+          } else {
+              alert('スタンプを選択してください。');
+          }
+      }
+
+      document.getElementById('sendButton').addEventListener('click', sendSelectedStamp);
+  });
+  </script>
+  
+{% endblock %}

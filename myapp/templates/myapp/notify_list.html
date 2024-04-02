@@ -1,0 +1,77 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}通知者一覧画面{% endblock %}
+
+{% block content %}
+
+<style>
+    h1 {
+        color:#3cb371;
+        font-size: 60px;
+        text-align: center;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    p {
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .notify {
+        font-size: 50px;
+        margin: 10px;
+        padding: 10px;
+        text-align: center;
+        }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin: 40 10px;
+        padding: 20px;
+    }
+
+    .button-container button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+
+    button {
+        font-size: 25px;
+    }
+
+    .button-container button:hover {
+    background-color: #45a049;
+    }
+</style>
+    <h1>通知者一覧</h1>
+    <p>通知の有無を変更できます</p>
+    <p>↓体調を通知したいフレンドには□にチェックを入れて下さい↓</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for item in friends_with_status %}
+            <div class="notify">
+                <label>
+                    <input type="checkbox" name="notify" value="{{ item.friend.id }}" {% if item.healthcheck_notification_enabled %}checked{% endif %}>
+                    {{ item.nickname }}
+                </label>
+            </div>
+        {% endfor %}
+        <div class="button-container">
+            <button type="submit">設定を更新</button>
+        </div>
+    </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}フレンドリスト{% endblock %}
+
+{% block content %}
+
+<style>
+    h1 {
+        color: #3cb371;
+        font-size: 60px;
+        text-align: center;
+    }
+
+    .list {
+        text-align: center;
+        padding: 30px;
+    }
+    
+    span {
+        font-size: 60px;
+        color: #009944;
+    }
+
+    a {
+        font-size: 40px;
+        padding: 15px;
+        color: black;
+        transition: color 0.3s;
+    }
+
+    a:hover, a:focus {
+    color: #3cb371;
+    text-decoration: none;
+}
+</style>
+<h1>フレンドリスト</h1>
+{% for item in friends_with_nickname %}
+    <div class="list">
+        <span>{{ item.display_name }}</span>
+        <a href="{% url 'chat_with_friend' item.friend.id %}">チャットする</a>
+        <a href="{% url 'update_friend_info' item.friend.id %}">登録情報を変更する</a>
+    </div>
+{% endfor %}
+{% endblock %}

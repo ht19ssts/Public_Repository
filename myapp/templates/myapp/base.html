@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ファーストチャット{% endblock %}</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="header">
+        <ul>
+            <li><a href="{% url 'home' %}">ホーム</a></li>
+            <li><a href="{% url 'chat_list' %}">チャットリスト</a></li>
+            <li><a href="{% url 'friend_list' %}">フレンドリスト</a></li>
+            <li><a href="{% url 'add_friend' %}">フレンド登録</a></li>
+            <li><a href="{% url 'notify_list' %}">通知者一覧</a></li>
+
+            <li>
+                <form action="{% url 'logout' %}" method="post" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">ログアウト</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <main>
+        {% block content %}  
+        {% endblock %}
+    </main>
+
+    <footer>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}チャットリスト{% endblock %}
+
+{% block content %}
+
+<style>
+    h1 {
+        padding: 10px;
+        color: #3cb371;
+        font-size: 60px;
+    }
+
+    ul {
+        list-style-type: none;
+        color: black;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+        padding: 20px;
+    }
+
+</style>
+<h1>チャットリスト</h1>
+<ul>
+    {% for chat in chats %}
+    <li>
+        <a href="{% url 'chat_with_friend' chat.user.id %}">
+            <strong>{{ chat.nickname }}</strong>
+            {% if chat.message.stamp %}
+            <img src="{{ chat.message.stamp.image_path.url }}" alt="{{ chat.message.stamp.stamp_name }}" style="width: 50px; height: 50px;">
+            {% endif %}
+            <p>{{ chat.message.created_at|date:"Y年m月d日 H:i" }}</p>
+        </a>
+    </li>
+    {% empty %}
+    <li>メッセージはありません。</li>
+    {% endfor %}
+</ul>
+{% endblock %}

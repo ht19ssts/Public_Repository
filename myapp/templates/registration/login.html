@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ログイン画面</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color:#e0ffe0;
+        }
+
+        h2.login {
+            font-family:"MS UI Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 60px;
+            color:#3cb371;
+            margin: 20px 0 60px;
+        }
+
+        .instructions {
+            font-size: 20px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 30px;
+        }
+
+        .login-form input {
+            font-size: 30px; 
+            margin: 0px;
+            padding: 5px;
+        }
+
+        .login-button {
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .login-button:hover {
+            background-color: #45a049; /* ホバー時の背景色を変更 */
+        }
+    </style>
+</head>
+<body>
+<h2 class="login">ログイン</h2>
+<p class="instructions">ユーザー名とパスワードを入力し、ログインボタンを押してください</p>
+<form method="post" class="login-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="login-button">ログイン</button>
+</form>
+</body>
+</html>

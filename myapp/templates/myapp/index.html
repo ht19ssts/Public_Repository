@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>トップページ</title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color:#e0ffe0;
+            font-family:"MS UI Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        h1.index {
+            font-size: 80px;
+            color:#3cb371;
+            margin: 20px 0 10px;
+        }
+
+        div.links {
+            text-decoration: none;
+            padding: 70px;
+        }
+
+        a {
+            font-size: 36px;
+            color:#2e8b57;
+            margin: 0 20px; 
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #27663f; 
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="index">ファーストチャットへ</h1>
+    <h1 class="index">ようこそ！</h1>
+
+    <div class="links">
+        <a href="{% url 'login' %}">ログイン</a> | <a href="{% url 'signup' %}">初めての方はこちら</a>
+    </div>
+</body>
+</html>

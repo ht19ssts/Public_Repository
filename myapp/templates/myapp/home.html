@@ -1,0 +1,107 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}ホーム画面{% endblock %}
+
+{% block content %}
+
+<style>
+    h1.home {
+        color: #3cb371;
+        font-size: 70px;
+        text-align: center;
+    }
+
+    .instructions {
+        font-size: 45px;
+        margin: 15px;
+    }
+
+    .health-status-btn {
+        display: inline-block;
+        padding: 20px 20px;
+        height: 100px;
+        font-size: 45px;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap; 
+    }
+
+    .health-status-btn:hover {
+    background-color: #2ae27d;
+    }
+
+    .health-status-btns-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px;
+    }
+
+   .instructions2 {
+        font-size: 45px;
+        text-align: center;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .btn-container {
+        text-align: center;
+    } 
+
+   .btn {
+        color: black;
+        font-size: 35px;
+        padding: 20px;
+   }
+
+</style>
+
+    <h1 class="home">こんにちは！</h1>
+
+    <p class="instructions">現在の日時 : {{ current_time }}</p>
+
+
+    <p class="instructions2">今日の体調は？</p>
+    <div class="health-status-btns-container">
+        <button class="health-status-btn" data-status="good">良好</button>
+        <button class="health-status-btn" data-status="poor">不良</button>
+    </div>
+
+    <div class="btn-container">
+        <a href="{% url 'chat_list' %}" class="btn">メッセージ確認</a>
+    </div>
+
+    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+
+    <script>
+      document.querySelectorAll('.health-status-btn').forEach(button => {
+          button.addEventListener('click', function() {
+              const status = this.getAttribute('data-status');
+              const csrftoken = document.getElementById('csrfToken').value;
+    
+              let data = new URLSearchParams();
+              data.append('status', status);
+    
+              fetch("{% url 'report_healthcheck_notification' %}", {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                      'X-CSRFToken': csrftoken,
+                  },
+                  body: data
+              })
+              .then(response => response.json()) 
+              .then(data => {
+                  if(data.success) {
+                      alert(data.message); 
+                  } else {
+                      console.error('Error reporting health status: ' + data.message);
+                  }
+              })
+              .catch(error => {
+                  console.error('Fetch error: ' + error);
+              });
+          });
+      });
+    </script>
+{% endblock %}

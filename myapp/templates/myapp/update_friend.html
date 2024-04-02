@@ -1,0 +1,65 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}登録情報変更画面{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 60px;
+        color: #3cb371;
+    }
+
+    .change {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    label {
+        font-size: 40px;
+    }
+
+    input {
+        font-size: 30px;
+    }
+
+    button {
+        font-size: 25px;
+        border-radius: 5px;
+        margin: 10px;
+    }
+
+    .change button:hover, form button:hover {
+    background-color: #45a049;
+    }
+</style>
+    <h1>{{ friend.username }}の登録情報変更</h1>
+
+    <div class="change">
+        <form method="post">
+            <P>↓登録・変更したいニックネームを入力して下さい↓</P>
+            {% csrf_token %}
+            
+            <label for="nickname">ニックネーム:</label>
+            <input type="text" id="nickname" name="nickname" value="{{ friend_settings.nickname|default:'' }}">
+            <button type="submit" name="action" value="update">変更</button>
+        </form>
+    </div>
+    
+    <form method="post">
+        <p>↓フレンドから削除する時はこちら↓</p>
+        {% csrf_token %}
+
+        <button type="submit" name="action" value="delete">削除</button>
+    </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
