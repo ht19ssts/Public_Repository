@@ -135,5 +135,5 @@ LOGIN_REDIRECT_URL = 'home'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_URL = '/login/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/first_chat/login/'
+LOGOUT_REDIRECT_URL = '/first_chat/top/'
