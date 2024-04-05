@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-kios!=2a7p5sf+a)$di-s$f(m8fam$=&6bgd9z(@8h^(5%w8im
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['myapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 

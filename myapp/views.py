@@ -20,6 +20,9 @@ from django.http import JsonResponse
 import json
 from collections import OrderedDict
 
+def index(request):
+    return render(request, 'myportfolio/index.html')
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -42,8 +45,8 @@ def home(request):
     }
      return render(request, 'myapp/home.html', context)
 
-def index(request):
-    return render(request, 'myapp/index.html')
+def top(request):
+    return render(request, 'myapp/top.html')
 
 @login_required
 def chat_with_friend(request, friend_id):
