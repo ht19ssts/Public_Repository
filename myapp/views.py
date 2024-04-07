@@ -21,7 +21,7 @@ import json
 from collections import OrderedDict
 
 def index(request):
-    return render(request, 'myportfolio/index.html')
+    return render(request, 'MyPortfolio/index.html')
 
 def signup(request):
     if request.method == 'POST':
