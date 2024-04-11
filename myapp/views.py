@@ -52,19 +52,27 @@ def top(request):
 def chat_with_friend(request, friend_id):
     friend = User.objects.get(pk=friend_id)
     stamps = Stamp.objects.all()
+
     messages = Chat.objects.filter(
-        user=request.user, friend=friend
-    ) | Chat.objects.filter(
-        user=friend, friend=request.user
-    )
-    messages = messages.order_by('-created_at')
-    
+        Q(user=request.user, friend=friend) |
+        Q(user=friend, friend=request.user)
+    ).order_by('-created_at')
+
+    # フレンド設定からニックネームを取得
     friend_settings = FriendSettings.objects.filter(user=request.user, friend=friend).first()
-    nickname = friend_settings.nickname if friend_settings else friend.username
-    
+    friend_nickname = friend_settings.nickname if friend_settings else None
+
+    # ニックネームを含めたメッセージの処理
+    for message in messages:
+        # フレンドからのメッセージで、かつニックネームが設定されている場合にニックネームを使用
+        if message.user != request.user and friend_nickname:
+            message.nickname = friend_nickname
+        else:
+            message.nickname = message.user.username  # それ以外の場合はユーザー名を使用
+
     return render(request, 'myapp/chat.html', {
         'friend': friend,
-        'nickname': nickname,
+        'nickname': friend_nickname if friend_nickname else friend.username,  # ビューで使用するニックネーム
         'stamps': stamps,
         'messages': messages,
         'friend_id': friend_id
@@ -239,20 +247,12 @@ def report_healthcheck_notification(request):
     stamp_id = GOOD_CONDITION_STAMP_ID if status == 'good' else POOR_CONDITION_STAMP_ID
     stamp = Stamp.objects.get(id=stamp_id)
 
-    unique_friend_ids = set()
+    # 体調報告を受け取るべきフレンドのIDのみを収集
+    notify_settings = FriendSettings.objects.filter(user=request.user, healthcheck_notification_enabled=True)
 
-    notify_settings = FriendSettings.objects.filter(
-        Q(user=request.user, healthcheck_notification_enabled=True) |
-        Q(friend=request.user, healthcheck_notification_enabled=True)
-    )
-
+    # ユーザーが通知者として設定したフレンドにのみ体調報告を送信
     for setting in notify_settings:
-        friend_id = setting.friend_id if setting.user == request.user else setting.user_id
-        unique_friend_ids.add(friend_id)
-
-    for friend_id in unique_friend_ids:
-        friend = User.objects.get(id=friend_id)
-        
+        friend = User.objects.get(id=setting.friend_id)
         Chat.objects.create(user=request.user, friend=friend, stamp=stamp)
 
     return JsonResponse({"success": True, "message": "体調が報告されました。"})

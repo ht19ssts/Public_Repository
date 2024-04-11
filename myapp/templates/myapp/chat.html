@@ -97,22 +97,21 @@
 </div>
 
 <div class="chat-history">
-    {% for message in messages %}
-      <div class="message">
-        <div class="{% if message.user == request.user %}sent{% else %}received{% endif %}">
-          <strong>{{ message.user.username }}:</strong>
-          {% if message.stamp %}
-              <img src="{{ message.stamp.image_path.url }}" alt="{{ message.stamp.stamp_name }}" style="width: 100px; height: 100px;">
-          {% else %}
-              <p>スタンプなし</p>
-          {% endif %}
-
-          <span class="timestamp">{{ message.created_at|date:"Y年m月d日 H:i" }}</span>
-        </div>
+  {% for message in messages %}
+    <div class="message">
+      <div class="{% if message.user == request.user %}sent{% else %}received{% endif %}">
+        <strong>{{ message.nickname }}:</strong>
+        {% if message.stamp %}
+            <img src="{{ message.stamp.image_path.url }}" alt="{{ message.stamp.stamp_name }}" style="width: 100px; height: 100px;">
+        {% else %}
+            <p>スタンプなし</p>
+        {% endif %}
+        <span class="timestamp">{{ message.created_at|date:"Y年m月d日 H:i" }}</span>
       </div>
-    {% empty %}
-      <p>メッセージはまだありません。</p>
-    {% endfor %}
+    </div>
+  {% empty %}
+    <p>メッセージはまだありません。</p>
+  {% endfor %}
 </div>
 
 
@@ -132,42 +131,43 @@
   };  
 
   document.addEventListener('DOMContentLoaded', function() {
-      const sendStampUrl = "{% url 'send_stamp' %}";
+    const sendStampUrl = "{% url 'send_stamp' %}";
 
-      function sendSelectedStamp() {
-          const stampId = document.getElementById('selectedStampId').value;
-          const friendId = '{{ friend_id }}';
-          const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-  
-          if(stampId) {
-              fetch(sendStampUrl, {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRFToken': csrftoken,
-                  },
-                  body: JSON.stringify({stamp_id: stampId, friend_id: friendId})
-              })
-              .then(response => response.json())
-              .then(data => {
-                  console.log(data);
-                  if(data.success) {
-                      alert("スタンプを送信しました！");
-                  } else {
-                      alert("エラー: " + data.message);
-                  }
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  alert("送信中にエラーが発生しました。");
-              });
-          } else {
-              alert('スタンプを選択してください。');
-          }
-      }
+    function sendSelectedStamp() {
+        const stampId = document.getElementById('selectedStampId').value;
+        const friendId = '{{ friend_id }}';
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-      document.getElementById('sendButton').addEventListener('click', sendSelectedStamp);
-  });
+        if(stampId) {
+            fetch(sendStampUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({stamp_id: stampId, friend_id: friendId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if(data.success) {
+                    // スタンプ送信成功後にページをリロードする
+                    window.location.reload();
+                } else {
+                    alert("エラー: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("送信中にエラーが発生しました。");
+            });
+        } else {
+            alert('スタンプを選択してください。');
+        }
+    }
+
+    document.getElementById('sendButton').addEventListener('click', sendSelectedStamp);
+});
   </script>
   
 {% endblock %}

@@ -15,7 +15,7 @@ class FriendSettings(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend_settings')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend_settings_friend')
     healthcheck_notification_enabled = models.BooleanField(default=False)
-    nickname = models.CharField(max_length=100, blank=True, null=True)
+    nickname = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

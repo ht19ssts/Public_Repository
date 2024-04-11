@@ -41,11 +41,11 @@
 
     <div class="change">
         <form method="post">
-            <P>↓登録・変更したいニックネームを入力して下さい↓</P>
+            <P>↓登録・変更したいニックネームを20字以内で入力して下さい↓</P>
             {% csrf_token %}
             
             <label for="nickname">ニックネーム:</label>
-            <input type="text" id="nickname" name="nickname" value="{{ friend_settings.nickname|default:'' }}">
+            <input type="text" id="nickname" name="nickname" value="{{ friend_settings.nickname|default:'' }}" maxlength="20" placeholder="20字以内で入力">
             <button type="submit" name="action" value="update">変更</button>
         </form>
     </div>

@@ -38,7 +38,7 @@
     <div class="list">
         <span>{{ item.display_name }}</span>
         <a href="{% url 'chat_with_friend' item.friend.id %}">チャットする</a>
-        <a href="{% url 'update_friend_info' item.friend.id %}">登録情報を変更する</a>
+        <a href="{% url 'update_friend_info' item.friend.id %}">登録情報を変更</a>
     </div>
 {% endfor %}
 {% endblock %}
